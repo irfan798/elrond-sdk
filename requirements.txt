@@ -5,4 +5,3 @@ pynacl
 pycryptodomex
 cryptography~=2.9.2
 
-setuptools
