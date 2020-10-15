@@ -108,7 +108,7 @@ def create_venv():
 
     logger.info(f"Creating virtual environment in: {folder}.")
     import venv
-    builder = venv.EnvBuilder(with_pip=True)
+    builder = venv.EnvBuilder(with_pip=False)
     builder.clear_directory(folder)
     builder.create(folder)
 
@@ -124,20 +124,19 @@ def require_venv():
     operating_system = get_operating_system()
 
     try:
-        import ensurepip
         import venv
-        logger.info(f"Packages found: {ensurepip}, {venv}.")
+        logger.info(f"Packages found: {venv}.")
     except ModuleNotFoundError:
         if operating_system == "linux":
-            logger.info("Package [venv] or [ensurepip] not found, will be installed.")
+            logger.info("Package [venv] not found, will be installed.")
             logger.info("Running [$ sudo apt-get install python3-venv]:")
             return_code = os.system("sudo apt-get install python3-venv")
             if return_code == 0:
                 logger.info("Done installing [python3-venv].")
             else:
-                raise InstallError("Packages [venv] or [ensurepip] not installed correctly.")
+                raise InstallError("Packages [venv] not installed correctly.")
         else:
-            raise InstallError("Packages [venv] or [ensurepip] not found, please install them first. See https://docs.python.org/3/tutorial/venv.html.")
+            raise InstallError("Packages [venv] not found, please install them first. See https://docs.python.org/3/tutorial/venv.html.")
 
 
 def get_erdpy_path():
@@ -154,6 +153,21 @@ def ensure_folder(folder):
 
 def install_erdpy():
     logger.info("Installing erdpy in virtual environment...")
+    
+    # download zip. wget! untar. that's all.
+    # https://github.com/ElrondNetwork/elrond-sdk/archive/no-pip.zip
+
+# import zipfile
+# def unzip(archive_path, destination_folder):
+#     logger.debug(f"unzip [{archive_path}] to [{destination_folder}].")
+
+#     ensure_folder(destination_folder)
+#     with zipfile.ZipFile(archive_path, "r") as my_zip:
+#         my_zip.extractall(destination_folder)
+
+#     logger.debug("unzip done.")
+
+
     erpy_versioned = "erdpy" if not exact_version else f"erdpy=={exact_version}"
     return_code = run_in_venv(["pip3", "install", "--no-cache-dir", erpy_versioned])
     if return_code != 0:
